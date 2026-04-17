@@ -1,0 +1,204 @@
+/* popup.css - Music Visualizer ポップアップUI */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: #0d1117;
+  color: #e0e0e0;
+  min-width: 320px;
+}
+
+.popup {
+  padding: 16px;
+}
+
+/* --- ヘッダー --- */
+.popup-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.popup-icon { width: 24px; height: 24px; object-fit: contain; border-radius: 4px; }
+
+.popup-title {
+  font-size: 16px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #58a6ff, #f472b6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* --- ステータス --- */
+.popup-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: rgba(22, 27, 34, 0.8);
+  border: 1px solid rgba(48, 54, 61, 0.6);
+  border-radius: 8px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #6e7681;
+  flex-shrink: 0;
+}
+
+.status-dot.active {
+  background: #3fb950;
+  box-shadow: 0 0 8px rgba(63, 185, 80, 0.5);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.status-text {
+  font-size: 12px;
+  color: #8b949e;
+}
+
+/* --- トグルボタン --- */
+.toggle-btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  background: linear-gradient(135deg, #58a6ff, #bc8cff);
+  color: #fff;
+  margin-bottom: 14px;
+}
+
+.toggle-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(88, 166, 255, 0.3);
+}
+
+.toggle-btn.active {
+  background: linear-gradient(135deg, #f85149, #f97583);
+}
+
+/* --- 設定セクション --- */
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.setting-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6e7681;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* --- ピル --- */
+.pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.pill {
+  flex: 1 0 auto;
+  padding: 5px 8px;
+  border: 1px solid rgba(139, 148, 158, 0.2);
+  border-radius: 8px;
+  background: rgba(48, 54, 61, 0.6);
+  color: #8b949e;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  font-family: inherit;
+}
+
+.pill:hover {
+  background: rgba(88, 166, 255, 0.15);
+  color: #e0e0e0;
+}
+
+.pill.active {
+  background: rgba(88, 166, 255, 0.25);
+  border-color: #58a6ff;
+  color: #58a6ff;
+}
+
+/* --- スライダー --- */
+.slider {
+  width: 100%;
+  accent-color: #58a6ff;
+  cursor: pointer;
+  height: 4px;
+}
+
+/* --- フッター --- */
+.popup-footer {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(48, 54, 61, 0.6);
+  text-align: center;
+}
+
+/* --- RGBピッカー --- */
+.rgb-picker {
+  margin-top: 6px;
+}
+
+.rgb-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rgb-row input[type="color"] {
+  width: 36px;
+  height: 28px;
+  border: 1px solid rgba(139, 148, 158, 0.3);
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.rgb-row input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 2px;
+}
+
+.rgb-row input[type="color"]::-webkit-color-swatch {
+  border-radius: 4px;
+  border: none;
+}
+
+.rgb-label {
+  font-size: 11px;
+  font-family: monospace;
+  color: #8b949e;
+}
+
+.footer-text {
+  font-size: 10px;
+  color: #484f58;
+}

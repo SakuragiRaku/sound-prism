@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup">
+    <div class="popup-header">
+      <img src="icons/icon48.png" class="popup-icon" alt="icon">
+      <h1 class="popup-title">Sound Prism</h1>
+    </div>
+
+    <div class="popup-status" id="status">
+      <span class="status-dot" id="status-dot"></span>
+      <span class="status-text" id="status-text">停止中</span>
+    </div>
+
+    <button class="toggle-btn" id="toggle-btn">▶ 開始</button>
+
+    <div class="settings-section">
+      <div class="setting-group">
+        <label class="setting-label">モード</label>
+        <div class="pill-group" id="mode-pills">
+          <button class="pill active" data-value="bars">バー</button>
+          <button class="pill" data-value="wave">ウェーブ</button>
+          <button class="pill" data-value="circle">サークル</button>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <label class="setting-label">カラー</label>
+        <div class="pill-group" id="color-pills">
+          <button class="pill active" data-value="rainbow">レインボー</button>
+          <button class="pill" data-value="neon">ネオン</button>
+          <button class="pill" data-value="mono">モノクロ</button>
+          <button class="pill" data-value="ocean">オーシャン</button>
+          <button class="pill" data-value="custom">カスタム</button>
+        </div>
+        <div class="rgb-picker" id="rgb-picker" style="display:none;">
+          <div class="rgb-row">
+            <input type="color" id="custom-color" value="#58a6ff">
+            <span class="rgb-label" id="rgb-label">#58A6FF</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <label class="setting-label">感度</label>
+        <input type="range" class="slider" id="sensitivity" min="0.1" max="2" step="0.1" value="1">
+      </div>
+
+      <div class="setting-group">
+        <label class="setting-label">不透明度</label>
+        <input type="range" class="slider" id="opacity" min="0.1" max="1" step="0.05" value="0.7">
+      </div>
+    </div>
+
+    <div class="popup-footer">
+      <span class="footer-text">YouTube動画で使用</span>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

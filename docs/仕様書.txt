@@ -1,0 +1,172 @@
+Sound Prism (Chrome拡張) 仕様書
+
+
+============================================================
+概要
+============================================================
+
+アプリ名:   Sound Prism
+ジャンル:   音楽可視化 Chrome拡張機能
+
+どんなアプリ?
+  YouTube動画プレーヤーに直接音声反応型ビジュアライザーを重ねるChrome拡張。
+  chrome.tabCapture APIでタブの音声を取得するため共有バーが表示されない。
+  拡張アイコンのポップアップからモード・カラー・感度・不透明度を変更可能。
+
+誰が使う?
+  YouTubeで音楽を聴きながら映像エフェクトを楽しみたい人。
+
+
+============================================================
+機能一覧
+============================================================
+
+ビジュアライザーオーバーレイ
+  YouTube動画プレーヤーの上にCanvas要素を重ねて描画
+  動画の操作を妨げない (pointer-events: none)
+  フルスクリーン対応 (キャプチャ一時停止→フルスクリーン遷移→再開)
+  タブ切り替え時にビジュアライザーが自動で新しいYouTubeタブに追従
+
+音声キャプチャ (共有バーなし)
+  chrome.tabCapture APIでタブ音声を取得
+  Offscreen Documentで周波数解析 (Web Audio API)
+  ポートベース接続でContent Scriptに解析データを転送
+  複数タブのポートをMap管理
+
+ビジュアルモード (3種類)
+  バー:       縦棒が周波数帯ごとの音量に反応 (上限なし)
+  ウェーブ:   波形データを滑らかな曲線で描画
+  サークル:   円形に配置された棒が中心から外に伸縮
+
+カラーテーマ (5種類)
+  レインボー / ネオン / モノクロ / オーシャン / カスタム(RGB指定)
+
+設定 (ポップアップUI)
+  ON/OFF トグル
+  モード選択 (3種)
+  カラーテーマ選択 (5種, カスタムはカラーピッカー付き)
+  感度スライダー (0.1〜2.0)
+  不透明度スライダー (0.1〜1.0)
+  設定はchrome.storage.localで永続化
+
+動画再生状態連動
+  YouTubeの動画が一時停止中はビジュアライザーを非表示
+  エネルギー閾値チェックで微小な音声混入を除外
+
+
+============================================================
+アーキテクチャ
+============================================================
+
+Manifest V3 Chrome拡張
+
+コンポーネント
+  Service Worker (service-worker.js)
+    tabCapture管理
+    Offscreen Document作成/破棄
+    複数タブのポート管理 (Map)
+    タブ切り替え検出と自動追従 (chrome.tabs.onActivated)
+    フルスクリーン用のpause/resumeキャプチャ
+    Popup / Content Script間のメッセージルーティング
+  
+  Offscreen Document (offscreen.html / offscreen.js)
+    streamIdからgetUserMediaで音声ストリーム取得
+    Web Audio APIのAnalyserNodeで周波数解析
+    source.connect(audioContext.destination)でスピーカー出力
+    30FPSでContent Scriptにデータ送信
+  
+  Content Script (content.js / content.css)
+    YouTube動画プレーヤー(#movie_player)にCanvas重ね
+    コンテナサイズはピクセル指定 (height:100%だと0になる問題対策)
+    z-index: 99999 (YouTube UIの階層を上回る)
+    chrome.runtime.connectでポートベース接続
+    MutationObserver + PollingでSPAナビゲーション対応
+    フルスクリーンボタン(.ytp-fullscreen-button)とFキーの傍受
+    動画再生状態(video.paused)チェック
+    描画ループで3モードのビジュアライザーを描画
+  
+  Popup (popup.html / popup.js / popup.css)
+    設定UIの表示
+    カスタムカラー用RGBカラーピッカー
+    chrome.storage.localへの設定保存
+    Service Workerへの開始/停止リクエスト
+
+
+============================================================
+ファイル構成
+============================================================
+
+Music Visualizer/
+  manifest.json         MV3マニフェスト
+  service-worker.js     バックグラウンドService Worker
+  offscreen.html        Offscreen Document (HTML)
+  offscreen.js          音声解析ロジック
+  content.js            YouTube用Content Script
+  content.css           Content Scriptのスタイル
+  popup.html            ポップアップUI (HTML)
+  popup.js              ポップアップロジック
+  popup.css             ポップアップスタイル
+  icons/
+    icon16.png          16x16 アイコン
+    icon48.png          48x48 アイコン
+    icon128.png         128x128 アイコン
+  docs/
+    仕様書.txt          この仕様書
+
+
+============================================================
+permissions
+============================================================
+
+tabCapture     タブの音声をキャプチャ
+offscreen      Offscreen Document作成
+storage        設定の永続化
+activeTab      アクティブタブの情報取得
+
+host_permissions
+  https://www.youtube.com/*
+
+
+============================================================
+データフロー
+============================================================
+
+1. ユーザーがYouTubeで動画再生
+2. 拡張アイコンクリック → Popup表示
+3. 開始ボタン → Service WorkerがtabCaptureでstreamId取得
+4. Offscreen Documentで音声解析
+5. 周波数データをポート経由でContent Scriptに転送
+6. Content Scriptが動画プレーヤー上のCanvasに描画
+7. タブ切り替え時はキャプチャを自動移動
+
+
+============================================================
+配布
+============================================================
+
+CRXファイル
+  パス: C:\Users\sakur\Desktop\app\Google Chrome Extensions\Music Visualizer.crx
+  秘密鍵: C:\Users\sakur\Desktop\app\Google Chrome Extensions\Music Visualizer.pem
+  作成方法: brave://extensions → 拡張機能をパッケージ化
+  注意: 更新時は同じ.pemファイルを指定すること
+
+インストール方法 (相手側)
+  デベロッパーモードでZIP展開して読み込むのが確実
+  CRXはストア外インストール制限あり
+
+
+============================================================
+既知の制限事項
+============================================================
+
+tabCaptureの音声ルーティング
+  開始/停止時に一瞬音が途切れる (Chrome API仕様)
+
+フルスクリーン制限
+  tabCapture中はChromeがフルスクリーンを制限する
+  キャプチャ一時停止→フルスクリーン→再開で回避
+
+エラーログ (全て無害)
+  Could not establish connection: タブ切替時のタイミング差
+  #movie_player未発見: YouTube読み込み中の自動リトライ
+  Chrome pages cannot be captured: YouTube以外のタブへの切替時
